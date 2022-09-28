@@ -1,25 +1,33 @@
 package com.opendream.minesweeper.screen;
 
+import static com.badlogic.gdx.graphics.GL20.GL_BLEND;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectSet;
+import com.badlogic.gdx.utils.OrderedMap;
+import com.badlogic.gdx.utils.OrderedSet;
 import com.opendream.minesweeper.Minesweeper;
 
 public class GameScreen implements Screen {
-
+    private static final int mineNumber = 10;
     private final Minesweeper game;
     private final OrthographicCamera camera;
     private final Texture background;
     private final Texture buttonTexture;
     private final Array<Rectangle> buttons;
-    private final Texture indicatorTexture;
+    private final Texture indicatorBackgroundTexture;
+    private final Texture mineTexture;
+    private final OrderedMap<Rectangle, Texture> mineField = new OrderedMap<>();
+    private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
+
     private Vector3 touchPosition;
 
     public GameScreen(final Minesweeper game) {
@@ -29,10 +37,12 @@ public class GameScreen implements Screen {
         camera.setToOrtho(false, 192, 234);
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
-        indicatorTexture = new Texture(Gdx.files.internal("indicator.png"));
+        indicatorBackgroundTexture = new Texture(Gdx.files.internal("indicator/indicator-background.jpg"));
+        mineTexture = new Texture(Gdx.files.internal("mine.png"));
 
         buttons = new Array<>();
         placeButtons();
+        placeMine();
     }
 
     @Override
@@ -43,16 +53,15 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
 
         game.getBatch().begin();
-        game.getBatch().disableBlending();
         initRender();
         game.getBatch().end();
 
         if (Gdx.input.justTouched()) {
             touchPosition = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY()).origin;
 
-            for (Rectangle button: buttons) {
+            for (Rectangle button : buttons) {
                 if (button.overlaps(new Rectangle(touchPosition.x, touchPosition.y, 1, 1))) {
-                    buttons.removeValue(button, true);
+                    buttonFields.remove(button);
                 }
             }
         }
@@ -66,7 +75,9 @@ public class GameScreen implements Screen {
         currentButton.y = 7;
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                buttons.add(new Rectangle(currentButton));
+                final Rectangle element = new Rectangle(currentButton);
+                buttons.add(element);
+                buttonFields.add(element);
                 currentButton.x = currentButton.x + 20;
             }
             currentButton.x = 7;
@@ -74,14 +85,35 @@ public class GameScreen implements Screen {
         }
     }
 
+    private void placeMine() {
+        final ObjectSet<Integer> mineCoordinates = new ObjectSet<>();
+
+        for (int i = 0; i < mineNumber; i++) {
+            mineCoordinates.add(MathUtils.random(80));
+        }
+
+        for (Rectangle button : buttons) {
+            if (mineCoordinates.contains(buttons.indexOf(button, true))) {
+                mineField.put(button, mineTexture);
+            }
+        }
+    }
+
     private void initRender() {
         game.getBatch().draw(background, 0, 0);
-        game.getBatch().draw(indicatorTexture, 11, 197);
-        game.getBatch().draw(indicatorTexture, 24, 197);
-        game.getBatch().draw(indicatorTexture, 37, 197);
+        game.getBatch().draw(indicatorBackgroundTexture, 11, 197);
+        game.getBatch().draw(indicatorBackgroundTexture, 24, 197);
+        game.getBatch().draw(indicatorBackgroundTexture, 37, 197);
 
         for (Rectangle currentButton : buttons) {
-            game.getBatch().draw(buttonTexture, currentButton.x, currentButton.y);
+            final Texture currentMine = mineField.get(currentButton);
+            if (currentMine != null) {
+                game.getBatch().draw(currentMine, currentButton.x, currentButton.y);
+            }
+
+            if (buttonFields.contains(currentButton)) {
+                game.getBatch().draw(buttonTexture, currentButton.x, currentButton.y);
+            }
         }
     }
 
