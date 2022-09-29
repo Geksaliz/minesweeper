@@ -1,6 +1,5 @@
 package com.opendream.minesweeper.screen;
 
-import static com.badlogic.gdx.graphics.GL20.GL_BLEND;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 import com.badlogic.gdx.Gdx;
@@ -15,15 +14,17 @@ import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.OrderedSet;
 import com.opendream.minesweeper.Minesweeper;
+import com.opendream.minesweeper.indicator.IndicatorService;
 
 public class GameScreen implements Screen {
     private static final int mineNumber = 10;
     private final Minesweeper game;
     private final OrthographicCamera camera;
+    private final IndicatorService indicatorService;
     private final Texture background;
     private final Texture buttonTexture;
     private final Array<Rectangle> buttons;
-    private final Texture indicatorBackgroundTexture;
+    private final Texture backgroundIndicatorTexture;
     private final Texture mineTexture;
     private final OrderedMap<Rectangle, Texture> mineField = new OrderedMap<>();
     private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
@@ -35,9 +36,10 @@ public class GameScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 192, 234);
+        indicatorService = new IndicatorService();
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
-        indicatorBackgroundTexture = new Texture(Gdx.files.internal("indicator/indicator-background.jpg"));
+        backgroundIndicatorTexture = new Texture(Gdx.files.internal("indicator/background.jpg"));
         mineTexture = new Texture(Gdx.files.internal("mine.png"));
 
         buttons = new Array<>();
@@ -54,6 +56,7 @@ public class GameScreen implements Screen {
 
         game.getBatch().begin();
         initRender();
+        setMineIndicators(0);
         game.getBatch().end();
 
         if (Gdx.input.justTouched()) {
@@ -101,9 +104,9 @@ public class GameScreen implements Screen {
 
     private void initRender() {
         game.getBatch().draw(background, 0, 0);
-        game.getBatch().draw(indicatorBackgroundTexture, 11, 197);
-        game.getBatch().draw(indicatorBackgroundTexture, 24, 197);
-        game.getBatch().draw(indicatorBackgroundTexture, 37, 197);
+        game.getBatch().draw(backgroundIndicatorTexture, 11, 197);
+        game.getBatch().draw(backgroundIndicatorTexture, 25, 197);
+        game.getBatch().draw(backgroundIndicatorTexture, 39, 197);
 
         for (Rectangle currentButton : buttons) {
             final Texture currentMine = mineField.get(currentButton);
@@ -114,6 +117,16 @@ public class GameScreen implements Screen {
             if (buttonFields.contains(currentButton)) {
                 game.getBatch().draw(buttonTexture, currentButton.x, currentButton.y);
             }
+        }
+    }
+
+    private void setMineIndicators(int count) {
+        setIndicator(indicatorService.getTexturePack(count), 11, 197);
+    }
+
+    private void setIndicator(Array<Texture> pack, int x, int y) {
+        for (Texture texture: pack) {
+            game.getBatch().draw(texture, x, y);
         }
     }
 
