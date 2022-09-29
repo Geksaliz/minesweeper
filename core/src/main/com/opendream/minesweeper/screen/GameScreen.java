@@ -121,11 +121,21 @@ public class GameScreen implements Screen {
     }
 
     private void setMineIndicators(int count) {
-        setIndicator(indicatorService.getTexturePack(count), 11, 197);
+        final StringBuilder numbers = new StringBuilder(String.valueOf(count));
+        while (numbers.length() < 3) {
+            numbers.insert(0, "0");
+        }
+
+        int x = 11;
+        final int y = 197;
+        for (String number : numbers.toString().split("")) {
+            setIndicator(indicatorService.getTexturePack(number), x, y);
+            x += 14;
+        }
     }
 
     private void setIndicator(Array<Texture> pack, int x, int y) {
-        for (Texture texture: pack) {
+        for (Texture texture : pack) {
             game.getBatch().draw(texture, x, y);
         }
     }
