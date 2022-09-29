@@ -17,7 +17,7 @@ import com.opendream.minesweeper.Minesweeper;
 import com.opendream.minesweeper.indicator.IndicatorService;
 
 public class GameScreen implements Screen {
-    private static final int mineNumber = 10;
+    private static int mineNumber = 10;
     private final Minesweeper game;
     private final OrthographicCamera camera;
     private final IndicatorService indicatorService;
@@ -56,7 +56,7 @@ public class GameScreen implements Screen {
 
         game.getBatch().begin();
         initRender();
-        setMineIndicators(0);
+        setMineIndicators(mineNumber);
         game.getBatch().end();
 
         if (Gdx.input.justTouched()) {
@@ -129,7 +129,7 @@ public class GameScreen implements Screen {
         int x = 11;
         final int y = 197;
         for (String number : numbers.toString().split("")) {
-            setIndicator(indicatorService.getTexturePack(number), x, y);
+            setIndicator(indicatorService.getTexturesForDrawingNumbers(number), x, y);
             x += 14;
         }
     }
