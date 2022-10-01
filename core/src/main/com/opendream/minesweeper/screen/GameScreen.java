@@ -75,7 +75,7 @@ public class GameScreen implements Screen {
             touchPosition = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY()).origin;
 
             for (Rectangle button : buttons) {
-                if (button.overlaps(new Rectangle(touchPosition.x, touchPosition.y, 1, 1))) {
+                if (button.overlaps(new Rectangle(touchPosition.x, touchPosition.y, 0, 0))) {
                     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                         if (!flagFields.contains(button)) {
                             buttonFields.remove(button);
