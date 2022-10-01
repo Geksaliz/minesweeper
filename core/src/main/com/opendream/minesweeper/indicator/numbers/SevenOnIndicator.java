@@ -1,4 +1,4 @@
-package com.opendream.minesweeper.indicator;
+package com.opendream.minesweeper.indicator.numbers;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;

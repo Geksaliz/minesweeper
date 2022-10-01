@@ -1,25 +1,27 @@
-package com.opendream.minesweeper.indicator;
+package com.opendream.minesweeper.indicator.numbers;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.opendream.minesweeper.utils.Indicator;
 
-public class FourOnIndicator implements IIndicator {
+public class FiveOnIndicator implements IIndicator {
     private final Array<Texture> pack = new Array<>();
 
-    public FourOnIndicator(Texture topLeft,
-                           Texture topRight,
+    public FiveOnIndicator(Texture top,
+                           Texture topLeft,
                            Texture mid,
-                           Texture botLeft) {
+                           Texture botRight,
+                           Texture bot) {
+        this.pack.add(top);
         this.pack.add(topLeft);
-        this.pack.add(topRight);
         this.pack.add(mid);
-        this.pack.add(botLeft);
+        this.pack.add(botRight);
+        this.pack.add(bot);
     }
 
     @Override
     public Indicator getNumber() {
-        return Indicator.FOUR;
+        return Indicator.FIVE;
     }
 
     @Override
