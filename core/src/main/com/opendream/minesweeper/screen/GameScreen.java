@@ -2,6 +2,8 @@ package com.opendream.minesweeper.screen;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
+import static java.lang.String.format;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -68,7 +70,7 @@ public class GameScreen implements Screen {
 
         game.getBatch().begin();
         initRender();
-        setMineIndicators(mineNumber);
+        setMineIndicators(mineNumber, 11, 197);
         game.getBatch().end();
 
         if (Gdx.input.justTouched()) {
@@ -133,6 +135,9 @@ public class GameScreen implements Screen {
         game.getBatch().draw(backgroundIndicatorTexture, 11, 197);
         game.getBatch().draw(backgroundIndicatorTexture, 25, 197);
         game.getBatch().draw(backgroundIndicatorTexture, 39, 197);
+        game.getBatch().draw(backgroundIndicatorTexture, 140, 197);
+        game.getBatch().draw(backgroundIndicatorTexture, 154, 197);
+        game.getBatch().draw(backgroundIndicatorTexture, 168, 197);
 
         for (Rectangle currentButton : buttons) {
             final Texture currentMine = mineField.get(currentButton);
@@ -146,20 +151,14 @@ public class GameScreen implements Screen {
 
             if (flagFields.contains(currentButton)) {
                 game.getBatch().draw(flagTexture, currentButton.x, currentButton.y);
-                    setMineIndicators(mineNumber);
+                    setMineIndicators(mineNumber, 11, 197);
             }
         }
     }
 
-    private void setMineIndicators(int count) {
-        final StringBuilder numbers = new StringBuilder(String.valueOf(count));
-        while (numbers.length() < 3) {
-            numbers.insert(0, "0");
-        }
-
-        int x = 11;
-        final int y = 197;
-        for (String number : numbers.toString().split("")) {
+    private void setMineIndicators(int count, int x, int y) {
+        final String[] numbers = prepareIndicator(count);
+        for (String number : numbers) {
             setIndicator(indicatorService.getTexturesForNumberDrawing(number), x, y);
             x += 14;
         }
@@ -169,6 +168,18 @@ public class GameScreen implements Screen {
         for (Texture texture : pack) {
             game.getBatch().draw(texture, x, y);
         }
+    }
+
+    private String[] prepareIndicator(int count) {
+        final StringBuilder numbers = new StringBuilder(String.valueOf(count));
+        if (numbers.length() > 3) {
+            throw new IllegalArgumentException(format("Number indicator mast be less then 1000, current value=%s", count));
+        }
+        while (numbers.length() < 3) {
+            numbers.insert(0, "0");
+        }
+
+        return numbers.toString().split("");
     }
 
     @Override
