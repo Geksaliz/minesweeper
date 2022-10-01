@@ -3,6 +3,7 @@ package com.opendream.minesweeper.screen;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,8 +27,10 @@ public class GameScreen implements Screen {
     private final Array<Rectangle> buttons;
     private final Texture backgroundIndicatorTexture;
     private final Texture mineTexture;
+    private final Texture flagTexture;
     private final OrderedMap<Rectangle, Texture> mineField = new OrderedMap<>();
     private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
+    private final OrderedSet<Rectangle> flagFields = new OrderedSet<>();
 
     private Vector3 touchPosition;
 
@@ -49,6 +52,7 @@ public class GameScreen implements Screen {
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
         backgroundIndicatorTexture = new Texture(Gdx.files.internal("indicator/background.jpg"));
         mineTexture = new Texture(Gdx.files.internal("mine.png"));
+        flagTexture = new Texture(Gdx.files.internal("flag.png"));
 
         buttons = new Array<>();
         placeButtons();
@@ -72,7 +76,21 @@ public class GameScreen implements Screen {
 
             for (Rectangle button : buttons) {
                 if (button.overlaps(new Rectangle(touchPosition.x, touchPosition.y, 1, 1))) {
-                    buttonFields.remove(button);
+                    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                        if (!flagFields.contains(button)) {
+                            buttonFields.remove(button);
+                        }
+                    }
+
+                    if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+                        final Rectangle element = new Rectangle(button);
+                        if (flagFields.contains(element)) {
+                            flagFields.remove(element);
+                            mineNumber++;
+                        } else if (mineNumber != 0 && flagFields.add(element)) {
+                            mineNumber--;
+                        }
+                    }
                 }
             }
         }
@@ -124,6 +142,11 @@ public class GameScreen implements Screen {
 
             if (buttonFields.contains(currentButton)) {
                 game.getBatch().draw(buttonTexture, currentButton.x, currentButton.y);
+            }
+
+            if (flagFields.contains(currentButton)) {
+                game.getBatch().draw(flagTexture, currentButton.x, currentButton.y);
+                    setMineIndicators(mineNumber);
             }
         }
     }
