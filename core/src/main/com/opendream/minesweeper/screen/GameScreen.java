@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.OrderedSet;
 import com.opendream.minesweeper.Minesweeper;
-import com.opendream.minesweeper.indicator.IndicatorService;
+import com.opendream.minesweeper.service.IndicatorService;
 
 public class GameScreen implements Screen {
     private static int mineNumber = 10;
@@ -36,7 +36,15 @@ public class GameScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 192, 234);
-        indicatorService = new IndicatorService();
+        indicatorService = new IndicatorService(
+                new Texture(Gdx.files.internal("indicator/bot.png")),
+                new Texture(Gdx.files.internal("indicator/bot-left.png")),
+                new Texture(Gdx.files.internal("indicator/bot-right.png")),
+                new Texture(Gdx.files.internal("indicator/mid.png")),
+                new Texture(Gdx.files.internal("indicator/top.png")),
+                new Texture(Gdx.files.internal("indicator/top-left.png")),
+                new Texture(Gdx.files.internal("indicator/top-right.png"))
+        );
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
         backgroundIndicatorTexture = new Texture(Gdx.files.internal("indicator/background.jpg"));
@@ -129,7 +137,7 @@ public class GameScreen implements Screen {
         int x = 11;
         final int y = 197;
         for (String number : numbers.toString().split("")) {
-            setIndicator(indicatorService.getTexturesForDrawingNumbers(number), x, y);
+            setIndicator(indicatorService.getTexturesForNumberDrawing(number), x, y);
             x += 14;
         }
     }

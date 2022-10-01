@@ -28,6 +28,7 @@ allprojects {
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.2.1'
         junitVersion = '5.9.1'
+        mockitoVersion = '4.8.0'
     }
 
     repositories {
@@ -64,6 +65,7 @@ project(":core") {
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
         testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+        testImplementation "org.mockito:mockito-core:$mockitoVersion"
     }
 }
 
