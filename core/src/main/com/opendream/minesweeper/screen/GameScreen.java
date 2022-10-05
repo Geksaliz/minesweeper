@@ -1,7 +1,6 @@
 package com.opendream.minesweeper.screen;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-
 import static java.lang.String.format;
 
 import com.badlogic.gdx.Gdx;
@@ -9,28 +8,27 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.OrderedSet;
 import com.opendream.minesweeper.Minesweeper;
 import com.opendream.minesweeper.service.IndicatorService;
+import com.opendream.minesweeper.service.InitializationService;
 
 public class GameScreen implements Screen {
     private static int mineNumber = 10;
     private final Minesweeper game;
     private final OrthographicCamera camera;
     private final IndicatorService indicatorService;
+    private final InitializationService initializationService;
     private final Texture background;
     private final Texture buttonTexture;
     private final Array<Rectangle> buttons;
     private final Texture backgroundIndicatorTexture;
-    private final Texture mineTexture;
     private final Texture flagTexture;
-    private final OrderedMap<Rectangle, Texture> mineField = new OrderedMap<>();
+    private final OrderedMap<Rectangle, Texture> gameField = new OrderedMap<>();
     private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
     private final OrderedSet<Rectangle> flagFields = new OrderedSet<>();
 
@@ -53,12 +51,19 @@ public class GameScreen implements Screen {
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
         backgroundIndicatorTexture = new Texture(Gdx.files.internal("indicator/background.jpg"));
-        mineTexture = new Texture(Gdx.files.internal("mine.png"));
         flagTexture = new Texture(Gdx.files.internal("flag.png"));
 
         buttons = new Array<>();
         placeButtons();
-        placeMine();
+        initializationService = new InitializationService(
+                new Texture(Gdx.files.internal("mine.png")),
+                new Texture(Gdx.files.internal("number/one.png")),
+                new Texture(Gdx.files.internal("number/two.png")),
+                new Texture(Gdx.files.internal("number/three.png")),
+                buttons,
+                mineNumber
+        );
+        gameField.putAll(initializationService.initField());
     }
 
     @Override
@@ -116,20 +121,6 @@ public class GameScreen implements Screen {
         }
     }
 
-    private void placeMine() {
-        final ObjectSet<Integer> mineCoordinates = new ObjectSet<>();
-
-        for (int i = 0; i < mineNumber; i++) {
-            mineCoordinates.add(MathUtils.random(80));
-        }
-
-        for (Rectangle button : buttons) {
-            if (mineCoordinates.contains(buttons.indexOf(button, true))) {
-                mineField.put(button, mineTexture);
-            }
-        }
-    }
-
     private void initRender() {
         game.getBatch().draw(background, 0, 0);
         game.getBatch().draw(backgroundIndicatorTexture, 11, 197);
@@ -140,7 +131,7 @@ public class GameScreen implements Screen {
         game.getBatch().draw(backgroundIndicatorTexture, 168, 197);
 
         for (Rectangle currentButton : buttons) {
-            final Texture currentMine = mineField.get(currentButton);
+            final Texture currentMine = gameField.get(currentButton);
             if (currentMine != null) {
                 game.getBatch().draw(currentMine, currentButton.x, currentButton.y);
             }
@@ -151,7 +142,7 @@ public class GameScreen implements Screen {
 
             if (flagFields.contains(currentButton)) {
                 game.getBatch().draw(flagTexture, currentButton.x, currentButton.y);
-                    setMineIndicators(mineNumber, 11, 197);
+                setMineIndicators(mineNumber, 11, 197);
             }
         }
     }
