@@ -1,5 +1,7 @@
 package com.opendream.minesweeper.service;
 
+import static java.lang.String.valueOf;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -25,12 +27,15 @@ public class IndicatorService {
                             Texture mid,
                             Texture top,
                             Texture topLeft,
-                            Texture topRight
+                            Texture topRight,
+                            Texture oneTexture,
+                            Texture twoTexture,
+                            Texture threeTexture
     ) {
         final IIndicator zero = new ZeroOnIndicator(top, topLeft, topRight, bot, botLeft, botRight);
-        final IIndicator one = new OneOnIndicator(topRight, botRight);
-        final IIndicator two = new TwoOnIndicator(top, topRight, mid, botLeft, bot);
-        final IIndicator three = new ThreeOnIndicator(top, topRight, mid, botRight, bot);
+        final IIndicator one = new OneOnIndicator(topRight, botRight, oneTexture);
+        final IIndicator two = new TwoOnIndicator(top, topRight, mid, botLeft, bot, twoTexture);
+        final IIndicator three = new ThreeOnIndicator(top, topRight, mid, botRight, bot, threeTexture);
         final IIndicator four = new FourOnIndicator(topLeft, topRight, mid, botRight);
         final IIndicator five = new FiveOnIndicator(top, topLeft, mid, botRight, bot);
         final IIndicator six = new SixOnIndicator(top, topLeft, botLeft, bot, botRight, mid);
@@ -53,5 +58,9 @@ public class IndicatorService {
 
     public Array<Texture> getTexturesForNumberDrawing(String number) {
         return indicators.get(Indicator.of(number)).getTexturePack();
+    }
+
+    public Texture getNumberTexture(int number) {
+        return indicators.get(Indicator.of(valueOf(number))).getNumberTexture();
     }
 }

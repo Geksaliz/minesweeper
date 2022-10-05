@@ -46,7 +46,10 @@ public class GameScreen implements Screen {
                 new Texture(Gdx.files.internal("indicator/mid.png")),
                 new Texture(Gdx.files.internal("indicator/top.png")),
                 new Texture(Gdx.files.internal("indicator/top-left.png")),
-                new Texture(Gdx.files.internal("indicator/top-right.png"))
+                new Texture(Gdx.files.internal("indicator/top-right.png")),
+                new Texture(Gdx.files.internal("number/one.png")),
+                new Texture(Gdx.files.internal("number/two.png")),
+                new Texture(Gdx.files.internal("number/three.png"))
         );
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
@@ -57,9 +60,7 @@ public class GameScreen implements Screen {
         placeButtons();
         initializationService = new InitializationService(
                 new Texture(Gdx.files.internal("mine.png")),
-                new Texture(Gdx.files.internal("number/one.png")),
-                new Texture(Gdx.files.internal("number/two.png")),
-                new Texture(Gdx.files.internal("number/three.png")),
+                indicatorService,
                 buttons,
                 mineNumber
         );

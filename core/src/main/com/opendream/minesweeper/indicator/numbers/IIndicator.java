@@ -7,4 +7,7 @@ import com.opendream.minesweeper.utils.Indicator;
 public interface IIndicator {
     Indicator getNumber();
     Array<Texture> getTexturePack();
+    default Texture getNumberTexture() {
+        throw new IllegalArgumentException("Number texture not found");
+    }
 }

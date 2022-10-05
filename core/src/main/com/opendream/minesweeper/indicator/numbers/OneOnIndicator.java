@@ -6,11 +6,14 @@ import com.opendream.minesweeper.utils.Indicator;
 
 public class OneOnIndicator implements IIndicator {
     private final Array<Texture> pack = new Array<>();
+    private final Texture number;
 
     public OneOnIndicator(Texture topRight,
-                          Texture botRight) {
+                          Texture botRight,
+                          Texture one) {
         this.pack.add(topRight);
         this.pack.add(botRight);
+        this.number = one;
     }
 
     @Override
@@ -21,5 +24,10 @@ public class OneOnIndicator implements IIndicator {
     @Override
     public Array<Texture> getTexturePack() {
         return pack;
+    }
+
+    @Override
+    public Texture getNumberTexture() {
+        return number;
     }
 }

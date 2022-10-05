@@ -11,23 +11,17 @@ import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.OrderedMap;
 
 public class InitializationService {
+    private final IndicatorService indicatorService;
     private final Texture mine;
-    private final Texture one;
-    private final Texture two;
-    private final Texture three;
     private final Array<Rectangle> buttons;
     private int mineNumber;
 
     public InitializationService(Texture mine,
-                                 Texture one,
-                                 Texture two,
-                                 Texture three,
+                                 IndicatorService indicatorService,
                                  Array<Rectangle> buttons,
                                  int mineNumber) {
         this.mine = mine;
-        this.one = one;
-        this.two = two;
-        this.three = three;
+        this.indicatorService = indicatorService;
         this.buttons = buttons;
         this.mineNumber = mineNumber;
     }
@@ -102,7 +96,7 @@ public class InitializationService {
             if (coordinate[x][y] > 50) {
                 field.put(button, mine);
             } else {
-                field.put(button, one);
+                field.put(button, indicatorService.getNumberTexture(coordinate[x][y]));
             }
 
             x++;
