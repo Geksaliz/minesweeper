@@ -1,11 +1,11 @@
-package com.opendream.minesweeper.indicator.numbers;
+package com.opendream.minesweeper.number;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
-import com.opendream.minesweeper.utils.Indicator;
+import com.opendream.minesweeper.utils.enums.Number;
 
-public interface IIndicator {
-    Indicator getNumber();
+public interface INumber {
+    Number getNumber();
     Array<Texture> getTexturePack();
     default Texture getNumberTexture() {
         throw new IllegalArgumentException("Number texture not found");

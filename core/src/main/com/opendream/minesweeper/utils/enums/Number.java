@@ -1,10 +1,10 @@
-package com.opendream.minesweeper.utils;
+package com.opendream.minesweeper.utils.enums;
 
 import static java.lang.String.format;
 
 import com.badlogic.gdx.utils.Array;
 
-public enum Indicator {
+public enum Number {
     ZERO("0"),
     ONE("1"),
     TWO("2"),
@@ -18,18 +18,18 @@ public enum Indicator {
 
     private final String number;
 
-    Indicator(String number) {
+    Number(String number) {
         this.number = number;
     }
 
-    public static Indicator of(String number) {
-        final Array<Indicator> indicators = new Array<>(Indicator.values());
-        for (Indicator indicator : indicators) {
+    public static Number of(String number) {
+        final Array<Number> indicators = new Array<>(Number.values());
+        for (Number indicator : indicators) {
             if (indicator.number.equals(number)) {
                 return indicator;
             }
         }
 
-        throw new IllegalArgumentException(format("Unsupported indicator number=%s", number));
+        throw new IllegalArgumentException(format("Unsupported number=%s", number));
     }
 }

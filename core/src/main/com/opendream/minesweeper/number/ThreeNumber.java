@@ -1,19 +1,19 @@
-package com.opendream.minesweeper.indicator.numbers;
+package com.opendream.minesweeper.number;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
-import com.opendream.minesweeper.utils.Indicator;
+import com.opendream.minesweeper.utils.enums.Number;
 
-public class ThreeOnIndicator implements IIndicator {
+public class ThreeNumber implements INumber {
     private final Array<Texture> pack = new Array<>();
     private final Texture number;
 
-    public ThreeOnIndicator(Texture top,
-                            Texture topRight,
-                            Texture mid,
-                            Texture botRjght,
-                            Texture bot,
-                            Texture three
+    public ThreeNumber(Texture top,
+                       Texture topRight,
+                       Texture mid,
+                       Texture botRjght,
+                       Texture bot,
+                       Texture three
     ) {
         this.pack.add(top);
         this.pack.add(topRight);
@@ -24,8 +24,8 @@ public class ThreeOnIndicator implements IIndicator {
     }
 
     @Override
-    public Indicator getNumber() {
-        return Indicator.THREE;
+    public Number getNumber() {
+        return Number.THREE;
     }
 
     @Override
