@@ -8,11 +8,13 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.OrderedMap;
+import com.badlogic.gdx.utils.OrderedSet;
 
 public class InitializationService {
     private final NumberService numberService;
     private final Texture mine;
     private final Array<Rectangle> buttons;
+    private static final OrderedSet<Rectangle> mines = new OrderedSet<>();
     private int mineNumber;
 
     public InitializationService(Texture mine,
@@ -46,9 +48,9 @@ public class InitializationService {
         }
 
         int i = 0;
-        for (int[] row: coordinate) {
+        for (int[] row : coordinate) {
             int j = 0;
-            for (int cellValue: row) {
+            for (int cellValue : row) {
                 if (cellValue > 50) {
                     if (j != 0) {
                         coordinate[i][j - 1] += 1;
@@ -94,6 +96,7 @@ public class InitializationService {
 
             if (coordinate[x][y] > 50) {
                 field.put(button, mine);
+                mines.add(button);
             } else {
                 field.put(button, numberService.getNumberTexture(coordinate[x][y]));
             }
@@ -106,5 +109,9 @@ public class InitializationService {
         }
 
         return field;
+    }
+
+    public OrderedSet<Rectangle> getMines() {
+        return mines;
     }
 }

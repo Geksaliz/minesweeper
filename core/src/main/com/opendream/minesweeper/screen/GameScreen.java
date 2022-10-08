@@ -14,15 +14,18 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.OrderedSet;
 import com.opendream.minesweeper.Minesweeper;
-import com.opendream.minesweeper.service.NumberService;
 import com.opendream.minesweeper.service.InitializationService;
+import com.opendream.minesweeper.service.NumberService;
+import com.opendream.minesweeper.utils.CustomTimer;
 
 public class GameScreen implements Screen {
     private static int mineNumber = 10;
+    private static boolean gameIsFail = false;
     private final Minesweeper game;
     private final OrthographicCamera camera;
     private final NumberService numberService;
     private final InitializationService initializationService;
+    private final CustomTimer timer;
     private final Texture background;
     private final Texture buttonTexture;
     private final Array<Rectangle> buttons;
@@ -31,6 +34,7 @@ public class GameScreen implements Screen {
     private final OrderedMap<Rectangle, Texture> gameField = new OrderedMap<>();
     private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
     private final OrderedSet<Rectangle> flagFields = new OrderedSet<>();
+    private final OrderedSet<Rectangle> mines = new OrderedSet<>();
 
     private Vector3 touchPosition;
 
@@ -51,6 +55,7 @@ public class GameScreen implements Screen {
                 new Texture(Gdx.files.internal("number/two.png")),
                 new Texture(Gdx.files.internal("number/three.png"))
         );
+        timer = new CustomTimer();
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
         backgroundIndicatorTexture = new Texture(Gdx.files.internal("indicator/background.jpg"));
@@ -65,6 +70,7 @@ public class GameScreen implements Screen {
                 mineNumber
         );
         gameField.putAll(initializationService.initField());
+        mines.addAll(initializationService.getMines());
     }
 
     @Override
@@ -76,10 +82,18 @@ public class GameScreen implements Screen {
 
         game.getBatch().begin();
         initRender();
-        setMineIndicators(mineNumber, 11, 197);
+        setIndicator(mineNumber, 11, 197);
+        setIndicator(timer.getTime(), 140, 197);
         game.getBatch().end();
 
+        if (gameIsFail) {
+            return;
+        }
+
         if (Gdx.input.justTouched()) {
+            if (!timer.isStarted()) {
+                timer.start();
+            }
             touchPosition = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY()).origin;
 
             for (Rectangle button : buttons) {
@@ -87,6 +101,10 @@ public class GameScreen implements Screen {
                     if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
                         if (!flagFields.contains(button)) {
                             buttonFields.remove(button);
+                        }
+                        if (mines.contains(button)) {
+                            timer.stop();
+                            gameIsFail = true;
                         }
                     }
 
@@ -132,9 +150,9 @@ public class GameScreen implements Screen {
         game.getBatch().draw(backgroundIndicatorTexture, 168, 197);
 
         for (Rectangle currentButton : buttons) {
-            final Texture currentMine = gameField.get(currentButton);
-            if (currentMine != null) {
-                game.getBatch().draw(currentMine, currentButton.x, currentButton.y);
+            final Texture texture = gameField.get(currentButton);
+            if (texture != null) {
+                game.getBatch().draw(texture, currentButton.x, currentButton.y);
             }
 
             if (buttonFields.contains(currentButton)) {
@@ -143,12 +161,12 @@ public class GameScreen implements Screen {
 
             if (flagFields.contains(currentButton)) {
                 game.getBatch().draw(flagTexture, currentButton.x, currentButton.y);
-                setMineIndicators(mineNumber, 11, 197);
+                setIndicator(mineNumber, 11, 197);
             }
         }
     }
 
-    private void setMineIndicators(int count, int x, int y) {
+    private void setIndicator(int count, int x, int y) {
         final String[] numbers = prepareIndicator(count);
         for (String number : numbers) {
             setIndicator(numberService.getTexturesForNumberDrawing(number), x, y);
