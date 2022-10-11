@@ -14,16 +14,18 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.OrderedSet;
 import com.opendream.minesweeper.Minesweeper;
+import com.opendream.minesweeper.mod.GameMode;
 import com.opendream.minesweeper.service.InitializationService;
 import com.opendream.minesweeper.service.NumberService;
 import com.opendream.minesweeper.utils.CustomTimer;
 
 public class GameScreen implements Screen {
-    private static int mineNumber = 10;
+    private static int mineNumber;
     private static boolean gameIsFail = false;
     private final Minesweeper game;
     private final OrthographicCamera camera;
     private final NumberService numberService;
+    private final GameMode gameMode;
     private final InitializationService initializationService;
     private final CustomTimer timer;
     private final Texture background;
@@ -38,11 +40,13 @@ public class GameScreen implements Screen {
 
     private Vector3 touchPosition;
 
-    public GameScreen(final Minesweeper game) {
+    public GameScreen(final Minesweeper game,
+                      final GameMode gameMode) {
         this.game = game;
+        this.gameMode = gameMode;
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 192, 234);
+        camera.setToOrtho(false, gameMode.getWindowWidth(), gameMode.getWindowHeight());
         numberService = new NumberService(
                 new Texture(Gdx.files.internal("indicator/bot.png")),
                 new Texture(Gdx.files.internal("indicator/bot-left.png")),
@@ -55,6 +59,7 @@ public class GameScreen implements Screen {
                 new Texture(Gdx.files.internal("number/two.png")),
                 new Texture(Gdx.files.internal("number/three.png"))
         );
+        mineNumber = gameMode.getMineNumber();
         timer = new CustomTimer();
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
@@ -82,8 +87,8 @@ public class GameScreen implements Screen {
 
         game.getBatch().begin();
         initRender();
-        setIndicator(mineNumber, 11, 197);
-        setIndicator(timer.getTime(), 140, 197);
+        setIndicator(mineNumber, gameMode.getIndicatorPositionX(), gameMode.getIndicatorPositionY());
+        setIndicator(timer.getTime(), gameMode.getTimerPositionX(), gameMode.getIndicatorPositionY());
         game.getBatch().end();
 
         if (gameIsFail) {
@@ -161,7 +166,7 @@ public class GameScreen implements Screen {
 
             if (flagFields.contains(currentButton)) {
                 game.getBatch().draw(flagTexture, currentButton.x, currentButton.y);
-                setIndicator(mineNumber, 11, 197);
+                setIndicator(mineNumber, gameMode.getIndicatorPositionX(), gameMode.getIndicatorPositionY());
             }
         }
     }
@@ -214,5 +219,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
+        game.dispose();
     }
 }
