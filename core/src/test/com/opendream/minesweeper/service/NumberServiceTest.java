@@ -21,7 +21,7 @@ class NumberServiceTest {
     void init() {
         Texture texture = Mockito.mock(Texture.class);
         service = new NumberService(texture, texture, texture, texture, texture, texture, texture,
-                texture, texture, texture);
+                texture, texture, texture, texture);
     }
 
     @ParameterizedTest

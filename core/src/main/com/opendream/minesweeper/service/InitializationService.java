@@ -1,6 +1,7 @@
 package com.opendream.minesweeper.service;
 
 import static com.badlogic.gdx.math.MathUtils.random;
+import static java.lang.String.valueOf;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.OrderedSet;
+import com.opendream.minesweeper.utils.enums.Number;
 
 public class InitializationService {
     private final NumberService numberService;
@@ -94,12 +96,13 @@ public class InitializationService {
                 continue;
             }
 
-            if (coordinate[x][y] > 50) {
-                field.put(button, mine);
-                mines.add(button);
-            } else {
-                field.put(button, numberService.getNumberTexture(coordinate[x][y]));
-            }
+            final Texture texture = Number.find(valueOf(coordinate[x][y]))
+                    .map(numberService::getNumberTexture)
+                    .orElseGet(() -> {
+                        mines.add(button);
+                        return mine;
+                    });
+            field.put(button, texture);
 
             x++;
             if (x > 8) {

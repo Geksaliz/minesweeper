@@ -61,7 +61,7 @@ public class NumberService {
         return indicators.get(Number.of(number)).getTexturePack();
     }
 
-    public Texture getNumberTexture(int number) {
-        return indicators.get(Number.of(valueOf(number))).getNumberTexture();
+    public Texture getNumberTexture(Number number) {
+        return indicators.get(number).getNumberTexture();
     }
 }
