@@ -57,7 +57,8 @@ public class GameScreen implements Screen {
                 new Texture(Gdx.files.internal("indicator/top-right.png")),
                 new Texture(Gdx.files.internal("number/one.png")),
                 new Texture(Gdx.files.internal("number/two.png")),
-                new Texture(Gdx.files.internal("number/three.png"))
+                new Texture(Gdx.files.internal("number/three.png")),
+                new Texture(Gdx.files.internal("number/four.png"))
         );
         mineNumber = gameMode.getMineNumber();
         timer = new CustomTimer();

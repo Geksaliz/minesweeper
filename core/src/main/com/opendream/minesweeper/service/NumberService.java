@@ -30,13 +30,14 @@ public class NumberService {
                          Texture topRight,
                          Texture oneTexture,
                          Texture twoTexture,
-                         Texture threeTexture
+                         Texture threeTexture,
+                         Texture fourTexture
     ) {
         final INumber zero = new ZeroNumber(top, topLeft, topRight, bot, botLeft, botRight);
         final INumber one = new OneNumber(topRight, botRight, oneTexture);
         final INumber two = new TwoNumber(top, topRight, mid, botLeft, bot, twoTexture);
         final INumber three = new ThreeNumber(top, topRight, mid, botRight, bot, threeTexture);
-        final INumber four = new FourNumber(topLeft, topRight, mid, botRight);
+        final INumber four = new FourNumber(topLeft, topRight, mid, botRight, fourTexture);
         final INumber five = new FiveNumber(top, topLeft, mid, botRight, bot);
         final INumber six = new SixNumber(top, topLeft, botLeft, bot, botRight, mid);
         final INumber seven = new SevenNumber(top, topRight, botRight);

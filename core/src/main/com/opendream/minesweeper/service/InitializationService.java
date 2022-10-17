@@ -98,7 +98,6 @@ public class InitializationService {
                 field.put(button, mine);
                 mines.add(button);
             } else {
-                System.out.println(coordinate[x][y]);
                 field.put(button, numberService.getNumberTexture(coordinate[x][y]));
             }
 
