@@ -31,7 +31,6 @@ public class GameScreen implements Screen {
     private final Texture background;
     private final Texture buttonTexture;
     private final Array<Rectangle> buttons;
-    private final Texture backgroundIndicatorTexture;
     private final Texture flagTexture;
     private final OrderedMap<Rectangle, Texture> gameField = new OrderedMap<>();
     private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
@@ -64,7 +63,6 @@ public class GameScreen implements Screen {
         timer = new CustomTimer();
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
-        backgroundIndicatorTexture = new Texture(Gdx.files.internal("indicator/background.jpg"));
         flagTexture = new Texture(Gdx.files.internal("flag.png"));
 
         buttons = new Array<>();
@@ -148,12 +146,6 @@ public class GameScreen implements Screen {
 
     private void initRender() {
         game.getBatch().draw(background, 0, 0);
-        game.getBatch().draw(backgroundIndicatorTexture, 11, 197);
-        game.getBatch().draw(backgroundIndicatorTexture, 25, 197);
-        game.getBatch().draw(backgroundIndicatorTexture, 39, 197);
-        game.getBatch().draw(backgroundIndicatorTexture, 140, 197);
-        game.getBatch().draw(backgroundIndicatorTexture, 154, 197);
-        game.getBatch().draw(backgroundIndicatorTexture, 168, 197);
 
         for (Rectangle currentButton : buttons) {
             final Texture texture = gameField.get(currentButton);
