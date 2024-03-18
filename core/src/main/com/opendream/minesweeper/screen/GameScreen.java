@@ -95,9 +95,7 @@ public class GameScreen implements Screen {
         }
 
         if (Gdx.input.justTouched()) {
-            if (!timer.isStarted()) {
-                timer.start();
-            }
+            timer.start();
             touchPosition = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY()).origin;
 
             for (Rectangle button : buttons) {

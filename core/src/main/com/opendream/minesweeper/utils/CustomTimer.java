@@ -11,18 +11,16 @@ public class CustomTimer {
         timer = Timer.instance();
     }
 
-    public boolean isStarted() {
-        return isStarted;
-    }
-
     public int getTime() {
         return second;
     }
 
     public void start() {
-        second = 0;
-        timer.scheduleTask(new CustomTask(), 1, 1);
-        isStarted = true;
+        if (!isStarted) {
+            second = 0;
+            timer.scheduleTask(new CustomTask(), 1, 1);
+            isStarted = true;
+        }
     }
 
     public void stop() {
