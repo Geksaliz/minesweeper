@@ -1,8 +1,5 @@
 package com.opendream.minesweeper.screen;
 
-import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static java.lang.String.format;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -18,6 +15,9 @@ import com.opendream.minesweeper.mod.GameMode;
 import com.opendream.minesweeper.service.InitializationService;
 import com.opendream.minesweeper.service.NumberService;
 import com.opendream.minesweeper.utils.CustomTimer;
+
+import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+import static java.lang.String.format;
 
 public class GameScreen implements Screen {
     private static int mineNumber;
@@ -36,8 +36,6 @@ public class GameScreen implements Screen {
     private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
     private final OrderedSet<Rectangle> flagFields = new OrderedSet<>();
     private final OrderedSet<Rectangle> mines = new OrderedSet<>();
-
-    private Vector3 touchPosition;
 
     public GameScreen(final Minesweeper game,
                       final GameMode gameMode) {
@@ -95,32 +93,7 @@ public class GameScreen implements Screen {
         }
 
         if (Gdx.input.justTouched()) {
-            timer.start();
-            touchPosition = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY()).origin;
-
-            for (Rectangle button : buttons) {
-                if (button.overlaps(new Rectangle(touchPosition.x, touchPosition.y, 0, 0))) {
-                    if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-                        if (!flagFields.contains(button)) {
-                            buttonFields.remove(button);
-                        }
-                        if (mines.contains(button)) {
-                            timer.stop();
-                            gameIsFail = true;
-                        }
-                    }
-
-                    if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
-                        final Rectangle element = new Rectangle(button);
-                        if (flagFields.contains(element)) {
-                            flagFields.remove(element);
-                            mineNumber++;
-                        } else if (mineNumber != 0 && flagFields.add(element)) {
-                            mineNumber--;
-                        }
-                    }
-                }
-            }
+            processClickToGameField();
         }
     }
 
@@ -186,6 +159,46 @@ public class GameScreen implements Screen {
         }
 
         return numbers.toString().split("");
+    }
+
+    private void processClickToGameField() {
+        timer.start();
+        final Vector3 touchPosition = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY()).origin;
+
+        for (Rectangle button : buttons) {
+            if (button.overlaps(new Rectangle(touchPosition.x, touchPosition.y, 0, 0))) {
+                processClickToButton(button);
+            }
+        }
+    }
+
+    private void processClickToButton(Rectangle button) {
+        if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            processLeftButtonClick(button);
+        }
+
+        if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+            processRightButtonClick(button);
+        }
+    }
+
+    private void processLeftButtonClick(Rectangle button) {
+        if (!flagFields.contains(button)) {
+            buttonFields.remove(button);
+        }
+        if (mines.contains(button)) {
+            timer.stop();
+            gameIsFail = true;
+        }
+    }
+
+    private void processRightButtonClick(Rectangle button) {
+        if (flagFields.contains(button)) {
+            flagFields.remove(button);
+            mineNumber++;
+        } else if (mineNumber != 0 && flagFields.add(button)) {
+            mineNumber--;
+        }
     }
 
     @Override
