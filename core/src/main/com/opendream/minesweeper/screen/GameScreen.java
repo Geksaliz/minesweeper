@@ -196,7 +196,8 @@ public class GameScreen implements Screen {
         if (flagFields.contains(button)) {
             flagFields.remove(button);
             mineNumber++;
-        } else if (mineNumber != 0 && flagFields.add(button)) {
+        } else if (mineNumber != 0 && buttonFields.contains(button)) {
+            flagFields.add(button);
             mineNumber--;
         }
     }
