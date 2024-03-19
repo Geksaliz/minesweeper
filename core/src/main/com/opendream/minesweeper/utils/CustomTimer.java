@@ -4,6 +4,7 @@ import com.badlogic.gdx.utils.Timer;
 
 public class CustomTimer {
     private static int second = 0;
+    private static final int maxValueSeconds = 998;
     private static boolean isStarted = false;
     private final Timer timer;
 
@@ -18,7 +19,7 @@ public class CustomTimer {
     public void start() {
         if (!isStarted) {
             second = 0;
-            timer.scheduleTask(new CustomTask(), 1, 1);
+            timer.scheduleTask(new CustomTask(), 1, 1, maxValueSeconds);
             isStarted = true;
         }
     }
