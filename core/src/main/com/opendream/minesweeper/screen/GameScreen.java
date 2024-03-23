@@ -2,7 +2,7 @@ package com.opendream.minesweeper.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
@@ -19,14 +19,13 @@ import com.opendream.minesweeper.utils.CustomTimer;
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static java.lang.String.format;
 
-public class GameScreen implements Screen {
+public class GameScreen extends ScreenAdapter {
     private static int mineNumber;
     private static boolean gameIsFail = false;
     private final Minesweeper game;
     private final OrthographicCamera camera;
     private final NumberService numberService;
     private final GameMode gameMode;
-    private final InitializationService initializationService;
     private final CustomTimer timer;
     private final Texture background;
     private final Texture buttonTexture;
@@ -65,7 +64,7 @@ public class GameScreen implements Screen {
 
         buttons = new Array<>();
         placeButtons();
-        initializationService = new InitializationService(
+        final InitializationService initializationService = new InitializationService(
                 new Texture(Gdx.files.internal("mine.png")),
                 numberService,
                 buttons,
@@ -200,26 +199,6 @@ public class GameScreen implements Screen {
             flagFields.add(button);
             mineNumber--;
         }
-    }
-
-    @Override
-    public void resize(int width, int height) {
-    }
-
-    @Override
-    public void show() {
-    }
-
-    @Override
-    public void hide() {
-    }
-
-    @Override
-    public void pause() {
-    }
-
-    @Override
-    public void resume() {
     }
 
     @Override
