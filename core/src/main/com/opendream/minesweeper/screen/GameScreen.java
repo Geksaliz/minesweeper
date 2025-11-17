@@ -10,11 +10,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.OrderedMap;
 import com.badlogic.gdx.utils.OrderedSet;
+import com.badlogic.gdx.utils.Queue;
 import com.opendream.minesweeper.Minesweeper;
 import com.opendream.minesweeper.mod.GameMode;
 import com.opendream.minesweeper.service.InitializationService;
 import com.opendream.minesweeper.service.NumberService;
 import com.opendream.minesweeper.utils.CustomTimer;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static java.lang.String.format;
@@ -35,6 +39,8 @@ public class GameScreen extends ScreenAdapter {
     private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
     private final OrderedSet<Rectangle> flagFields = new OrderedSet<>();
     private final OrderedSet<Rectangle> mines = new OrderedSet<>();
+    private Set<Rectangle> setForRemove;
+    private Queue<Rectangle> queueForRemove;
 
     public GameScreen(final Minesweeper game,
                       final GameMode gameMode) {
@@ -185,9 +191,16 @@ public class GameScreen extends ScreenAdapter {
         if (!flagFields.contains(button)) {
             buttonFields.remove(button);
         }
+
+        // Hit a mine
         if (mines.contains(button)) {
             timer.stop();
             gameIsFail = true;
+            return;
+        }
+
+        if (!gameField.containsKey(button)) {
+            openEmptyCells(button);
         }
     }
 
@@ -198,6 +211,61 @@ public class GameScreen extends ScreenAdapter {
         } else if (mineNumber != 0 && buttonFields.contains(button)) {
             flagFields.add(button);
             mineNumber--;
+        }
+    }
+
+    private void openEmptyCells(Rectangle button) {
+        if (flagFields.contains(button)) {
+            return;
+        }
+
+        setForRemove = new HashSet<>();
+        setForRemove.add(button);
+
+        queueForRemove = new Queue<>();
+        addNeighboringCells(button);
+
+        while (!queueForRemove.isEmpty()) {
+            openCell(queueForRemove.first());
+            queueForRemove.removeFirst();
+        }
+
+        setForRemove.stream()
+                .filter(btn -> !flagFields.contains(btn))
+                .forEach(buttonFields::remove);
+    }
+
+    private void openCell(Rectangle button) {
+        if (flagFields.contains(button)) {
+            return;
+        }
+
+        if (!gameField.containsKey(button)) {
+            setForRemove.add(button);
+            addNeighboringCells(button);
+        }
+    }
+
+    private void addNeighboringCells(Rectangle button) {
+        Array<Rectangle> listButtons = new Array<>();
+        // TODO: describe constants
+        if (button.getY() - 7 > 0) {
+            listButtons.add(new Rectangle(button.getX(), button.getY() - button.getHeight(), button.getWidth(), button.getHeight()));
+        }
+        if (button.getY() + 10 + button.getHeight() < gameMode.getIndicatorPositionY()) {
+            listButtons.add(new Rectangle(button.getX(), button.getY() + button.getHeight(), button.getWidth(), button.getHeight()));
+        }
+        if (button.getX() + 7 + button.getWidth() < gameMode.getWindowWidth()) {
+            listButtons.add(new Rectangle(button.getX() + button.getWidth(), button.getY(), button.getWidth(), button.getHeight()));
+        }
+        if (button.getX() - 7 > 0) {
+            listButtons.add(new Rectangle(button.getX() - button.getWidth(), button.getY(), button.getWidth(), button.getHeight()));
+        }
+
+        for (Rectangle btn : listButtons) {
+            if (!setForRemove.contains(btn)) {
+                queueForRemove.addLast(btn);
+            }
         }
     }
 
