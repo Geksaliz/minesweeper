@@ -10,6 +10,7 @@ public class CustomTimer {
 
     public CustomTimer() {
         timer = Timer.instance();
+        //timer.clear();
     }
 
     public int getTime() {

@@ -34,11 +34,14 @@ public class GameScreen extends ScreenAdapter {
     private final Texture background;
     private final Texture buttonTexture;
     private final Array<Rectangle> buttons;
+    private final Rectangle smileButton;
     private final Texture flagTexture;
-    private final OrderedMap<Rectangle, Texture> gameField = new OrderedMap<>();
-    private final OrderedSet<Rectangle> buttonFields = new OrderedSet<>();
-    private final OrderedSet<Rectangle> flagFields = new OrderedSet<>();
-    private final OrderedSet<Rectangle> mines = new OrderedSet<>();
+    private final Texture smileTexture;
+    private final Texture loseTexture;
+    private final OrderedMap<Rectangle, Texture> gameField;
+    private final OrderedSet<Rectangle> buttonFields;
+    private final OrderedSet<Rectangle> flagFields;
+    private final OrderedSet<Rectangle> mines;
     private Set<Rectangle> setForRemove;
     private Queue<Rectangle> queueForRemove;
 
@@ -67,8 +70,13 @@ public class GameScreen extends ScreenAdapter {
         background = new Texture(Gdx.files.internal("background.png"));
         buttonTexture = new Texture(Gdx.files.internal("button.png"));
         flagTexture = new Texture(Gdx.files.internal("flag.png"));
+        smileTexture = new Texture(Gdx.files.internal("smile/start.png"));
+        loseTexture = new Texture(Gdx.files.internal("smile/lose.png"));
 
-        buttons = new Array<>();
+        this.buttons = new Array<>();
+        this.buttonFields = new OrderedSet<>();
+        // TODO: Use game mode to set position
+        this.smileButton = new Rectangle(83, 197, 27, 27);
         placeButtons();
         final InitializationService initializationService = new InitializationService(
                 new Texture(Gdx.files.internal("mine.png")),
@@ -76,7 +84,10 @@ public class GameScreen extends ScreenAdapter {
                 buttons,
                 mineNumber
         );
+        this.flagFields = new OrderedSet<>();
+        this.gameField = new OrderedMap<>();
         gameField.putAll(initializationService.initField());
+        this.mines = new OrderedSet<>();
         mines.addAll(initializationService.getMines());
     }
 
@@ -91,11 +102,12 @@ public class GameScreen extends ScreenAdapter {
         initRender();
         setIndicator(mineNumber, gameMode.getIndicatorPositionX(), gameMode.getIndicatorPositionY());
         setIndicator(timer.getTime(), gameMode.getTimerPositionX(), gameMode.getIndicatorPositionY());
-        game.getBatch().end();
 
         if (gameIsFail) {
-            return;
+            game.getBatch().draw(loseTexture, 83, 197);
         }
+
+        game.getBatch().end();
 
         if (Gdx.input.justTouched()) {
             processClickToGameField();
@@ -122,6 +134,8 @@ public class GameScreen extends ScreenAdapter {
 
     private void initRender() {
         game.getBatch().draw(background, 0, 0);
+        // TODO: use game mode
+        game.getBatch().draw(smileTexture, 83, 197);
 
         for (Rectangle currentButton : buttons) {
             final Texture texture = gameField.get(currentButton);
@@ -169,6 +183,14 @@ public class GameScreen extends ScreenAdapter {
     private void processClickToGameField() {
         timer.start();
         final Vector3 touchPosition = camera.getPickRay(Gdx.input.getX(), Gdx.input.getY()).origin;
+
+        if (smileButton.contains(touchPosition.x, touchPosition.y)) {
+            gameIsFail = false;
+            timer.stop();
+            game.setScreen(new GameScreen(game, gameMode));
+        }
+
+        if (gameIsFail) return;
 
         for (Rectangle button : buttons) {
             if (button.overlaps(new Rectangle(touchPosition.x, touchPosition.y, 0, 0))) {

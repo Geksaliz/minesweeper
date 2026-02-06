@@ -16,7 +16,7 @@ public class InitializationService {
     private final NumberService numberService;
     private final Texture mine;
     private final Array<Rectangle> buttons;
-    private static final OrderedSet<Rectangle> mines = new OrderedSet<>();
+    private final OrderedSet<Rectangle> mines;
     private int mineNumber;
 
     public InitializationService(Texture mine,
@@ -26,6 +26,7 @@ public class InitializationService {
         this.mine = mine;
         this.numberService = numberService;
         this.buttons = buttons;
+        this.mines = new OrderedSet<>();
         this.mineNumber = mineNumber;
     }
 
